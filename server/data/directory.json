@@ -1,0 +1,40 @@
+{
+  "categories": [
+    {
+      "id": "username",
+      "name": "Username Search",
+      "description": "Tools for tracking usernames across social platforms.",
+      "tools": [
+        {"name": "Sherlock", "url": "https://github.com/sherlock-project/sherlock", "description": "Hunt down social media accounts by username."},
+        {"name": "WhatsMyName", "url": "https://whatsmyname.app/", "description": "Search for usernames on many websites."}
+      ]
+    },
+    {
+      "id": "email",
+      "name": "Email Addresses",
+      "description": "Services for email verification and ownership identification.",
+      "tools": [
+        {"name": "Hunter.io", "url": "https://hunter.io/", "description": "Find email addresses of any company."},
+        {"name": "EPIEOS", "url": "https://epieos.com/", "description": "Find information linked to an email address."}
+      ]
+    },
+    {
+      "id": "domain",
+      "name": "Domain Name",
+      "description": "WHOIS, DNS, and subdomain discovery tools.",
+      "tools": [
+        {"name": "ViewDNS.info", "url": "https://viewdns.info/", "description": "Multiple DNS and domain tools."},
+        {"name": "SecurityTrails", "url": "https://securitytrails.com/", "description": "Domain and IP history."}
+      ]
+    },
+    {
+      "id": "iot",
+      "name": "IoT / Devices",
+      "description": "Search engines for internet-connected devices.",
+      "tools": [
+        {"name": "Shodan", "url": "https://www.shodan.io/", "description": "Search for internet-connected devices."},
+        {"name": "Censys", "url": "https://censys.io/", "description": "Search for devices, certificates, and more."}
+      ]
+    }
+  ]
+}
