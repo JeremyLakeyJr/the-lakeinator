@@ -17,7 +17,7 @@ class DNSReconModule(BaseModule):
         url = f"https://crt.sh/?q=%25.{target}&output=json"
         
         try:
-            async with httpx.AsyncClient(timeout=10.0) as client:
+            async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
                 response = await client.get(url)
                 if response.status_code == 200:
                     data = response.json()
@@ -27,12 +27,20 @@ class DNSReconModule(BaseModule):
                         name_value = entry.get("name_value", "")
                         for sub in name_value.split("\n"):
                             if sub.strip() and sub.strip() != target:
-                                subdomains.add(sub.strip())
+                                # Basic validation to filter out wildcards
+                                if not sub.strip().startswith("*"):
+                                    subdomains.add(sub.strip())
                     
                     for sub in subdomains:
                         results.append(self.create_entity("subdomain", sub))
+                else:
+                    results.append(self.create_entity("system_info", f"DNS lookup returned status {response.status_code}"))
+        except httpx.TimeoutException:
+            results.append(self.create_entity("system_info", "DNS lookup timed out - service may be unavailable"))
+        except httpx.NetworkError:
+            results.append(self.create_entity("system_info", "Network unavailable for DNS lookup"))
         except Exception as e:
             # In a real app, we'd log this
-            results.append(self.create_entity("error", str(e), {"context": "crt.sh lookup"}))
+            results.append(self.create_entity("system_info", f"DNS lookup unavailable: {type(e).__name__}"))
             
         return results

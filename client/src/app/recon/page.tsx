@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Search, Shield, Download, Cpu, Activity } from 'lucide-react';
+import { Download, Activity } from 'lucide-react';
 
 interface Entity {
   module: string;
   type: string;
   value: string;
-  metadata: any;
+  metadata: Record<string, unknown>;
 }
 
 export default function ReconPage() {
@@ -40,8 +40,9 @@ export default function ReconPage() {
       if (!res.ok) throw new Error('Failed to fetch intelligence data');
       const data = await res.json();
       setResults(data.entities);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
