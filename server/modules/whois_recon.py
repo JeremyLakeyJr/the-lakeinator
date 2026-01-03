@@ -24,15 +24,24 @@ class WHOISReconModule(BaseModule):
                     
                     # Extract registrar
                     registrar = data.get("port43", "Unknown")
-                    results.append(self.create_entity("registrar", registrar))
+                    if registrar != "Unknown":
+                        results.append(self.create_entity("registrar", registrar))
                     
                     # Extract events (creation, expiration)
                     for event in data.get("events", []):
                         action = event.get("eventAction")
                         date = event.get("eventDate")
-                        results.append(self.create_entity("domain_event", f"{action}: {date}"))
-                        
+                        if action and date:
+                            results.append(self.create_entity("domain_event", f"{action}: {date}"))
+                elif response.status_code == 404:
+                    results.append(self.create_entity("system_info", "Domain not found in WHOIS database"))
+                else:
+                    results.append(self.create_entity("system_info", f"WHOIS lookup returned status {response.status_code}"))
+        except httpx.TimeoutException:
+            results.append(self.create_entity("system_info", "WHOIS lookup timed out - service may be unavailable"))
+        except httpx.NetworkError:
+            results.append(self.create_entity("system_info", "Network unavailable for WHOIS lookup"))
         except Exception as e:
-            results.append(self.create_entity("error", str(e), {"context": "RDAP lookup"}))
+            results.append(self.create_entity("system_info", f"WHOIS lookup unavailable: {type(e).__name__}"))
             
         return results

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
@@ -40,14 +40,12 @@ export default function GraphPage() {
   const [target, setTarget] = useState('');
   const [loading, setLoading] = useState(false);
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
-  const [error, setError] = useState('');
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!target) return;
 
     setLoading(true);
-    setError('');
     
     try {
       const res = await fetch(`http://localhost:8000/api/recon?target=${encodeURIComponent(target)}`);
@@ -64,7 +62,7 @@ export default function GraphPage() {
       }];
       const links: LinkType[] = [];
 
-      data.entities.forEach((entity: any, index: number) => {
+      data.entities.forEach((entity: { type: string; value: string }) => {
         const nodeId = `${entity.type}-${entity.value}`;
         
         // Add node if it doesn't exist
@@ -86,8 +84,8 @@ export default function GraphPage() {
       });
 
       setGraphData({ nodes, links });
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      console.error('Failed to fetch data:', err);
     } finally {
       setLoading(false);
     }
@@ -134,14 +132,17 @@ export default function GraphPage() {
         {graphData.nodes.length > 0 ? (
           <ForceGraph2D
             graphData={graphData}
-            nodeLabel={(node: any) => `${node.type.toUpperCase()}: ${node.name}`}
-            nodeColor={(node: any) => node.color}
+            nodeLabel={(node) => {
+              const n = node as Node;
+              return `${n.type.toUpperCase()}: ${n.name}`;
+            }}
+            nodeColor={(node) => (node as Node).color}
             linkColor={() => '#164e63'}
             backgroundColor="#000000"
             nodeRelSize={6}
             linkDirectionalParticles={2}
             linkDirectionalParticleSpeed={0.005}
-            onNodeClick={(node: any) => {
+            onNodeClick={(node) => {
                // Future: Expand node or show details
                console.log('Clicked node:', node);
             }}

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { BoxSelect, LayoutGrid, Rotate3d } from 'lucide-react';
+import { Rotate3d } from 'lucide-react';
 
 const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), { ssr: false });
 
@@ -53,7 +53,7 @@ export default function Graph3DPage() {
       const nodes: Node[] = [{ id: target, name: target, type: 'target', val: 12, color: TYPE_COLORS.target }];
       const links: LinkType[] = [];
 
-      data.entities.forEach((entity: any) => {
+      data.entities.forEach((entity: { type: string; value: string }) => {
         const nodeId = `${entity.type}-${entity.value}`;
         if (!nodes.find(n => n.id === nodeId)) {
           nodes.push({
@@ -118,9 +118,12 @@ export default function Graph3DPage() {
           <ForceGraph3D
             graphData={graphData}
             backgroundColor="#000000"
-            nodeColor={(node: any) => node.color}
+            nodeColor={(node) => (node as Node).color}
             linkColor={() => '#164e63'}
-            nodeLabel={(node: any) => `${node.type.toUpperCase()}: ${node.name}`}
+            nodeLabel={(node) => {
+              const n = node as Node;
+              return `${n.type.toUpperCase()}: ${n.name}`;
+            }}
             linkDirectionalParticles={4}
             linkDirectionalParticleSpeed={0.006}
             showNavInfo={true}
