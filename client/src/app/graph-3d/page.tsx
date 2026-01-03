@@ -120,7 +120,10 @@ export default function Graph3DPage() {
             backgroundColor="#000000"
             nodeColor={(node) => (node as Node).color}
             linkColor={() => '#164e63'}
-            nodeLabel={(node) => `${(node as Node).type.toUpperCase()}: ${(node as Node).name}`}
+            nodeLabel={(node) => {
+              const n = node as Node;
+              return `${n.type.toUpperCase()}: ${n.name}`;
+            }}
             linkDirectionalParticles={4}
             linkDirectionalParticleSpeed={0.006}
             showNavInfo={true}

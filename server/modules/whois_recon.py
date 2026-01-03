@@ -17,7 +17,7 @@ class WHOISReconModule(BaseModule):
         results = []
         
         try:
-            async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+            async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.get(url)
                 if response.status_code == 200:
                     data = response.json()

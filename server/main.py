@@ -2,11 +2,19 @@ import json
 import os
 import asyncio
 import re
+import logging
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from modules.dns_recon import DNSReconModule
 from modules.whois_recon import WHOISReconModule
 from modules.shodan_recon import ShodanReconModule
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="The Lakeinator API", 
@@ -96,13 +104,14 @@ async def run_recon(
         flat_results = []
         for i, results in enumerate(module_results):
             if isinstance(results, Exception):
-                # If a module raised an exception, log it and add an error entity
+                # Log the exception for debugging
                 module_name = RECON_MODULES[i].name
+                logger.error(f"Module {module_name} failed for target {target}: {str(results)}", exc_info=results)
                 flat_results.append({
                     "module": module_name,
                     "type": "system_info",
                     "value": f"Module {module_name} encountered an error",
-                    "metadata": {"error": str(results)}
+                    "metadata": {}
                 })
             else:
                 flat_results.extend(results)
@@ -114,6 +123,7 @@ async def run_recon(
             "modules_executed": len(RECON_MODULES)
         }
     except Exception as e:
+        logger.error(f"Error during reconnaissance for target {target}: {str(e)}", exc_info=e)
         raise HTTPException(
             status_code=500, 
             detail=f"Error during reconnaissance: {str(e)}"

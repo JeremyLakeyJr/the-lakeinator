@@ -132,7 +132,10 @@ export default function GraphPage() {
         {graphData.nodes.length > 0 ? (
           <ForceGraph2D
             graphData={graphData}
-            nodeLabel={(node) => `${(node as Node).type.toUpperCase()}: ${(node as Node).name}`}
+            nodeLabel={(node) => {
+              const n = node as Node;
+              return `${n.type.toUpperCase()}: ${n.name}`;
+            }}
             nodeColor={(node) => (node as Node).color}
             linkColor={() => '#164e63'}
             backgroundColor="#000000"

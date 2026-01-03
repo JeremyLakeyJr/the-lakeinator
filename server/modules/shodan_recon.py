@@ -23,7 +23,7 @@ class ShodanReconModule(BaseModule):
         url = f"https://api.shodan.io/shodan/host/search?key={api_key}&query=hostname:{target}"
         
         try:
-            async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
+            async with httpx.AsyncClient(timeout=15.0) as client:
                 response = await client.get(url)
                 if response.status_code == 200:
                     data = response.json()
