@@ -31,7 +31,7 @@ async def root():
 
 @app.get("/api/directory")
 async def get_directory():
-    file_path = "server/data/directory.json"
+    file_path = "data/directory.json"
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="Directory data not found")
     
