@@ -25,7 +25,7 @@ async def check_health():
             if response.status_code == 200:
                 data = response.json()
                 print(f"   ✅ Status: {data.get('status')}")
-                print(f"   ✅ Version: {data.get('version')}")
+                print(f"   ✅ Version: {data.get('version', 'N/A')}")
                 print(f"   ✅ Modules: {len(data.get('modules', []))}")
             else:
                 print(f"   ❌ Failed with status {response.status_code}")
@@ -52,7 +52,7 @@ async def check_health():
                 data = response.json()
                 print(f"   ✅ Target: {data.get('target')}")
                 print(f"   ✅ Entities found: {data.get('results_count')}")
-                print(f"   ✅ Modules executed: {data.get('modules_executed')}")
+                print(f"   ✅ Modules executed: {data.get('modules_executed', 'N/A')}")
             else:
                 print(f"   ❌ Failed with status {response.status_code}")
                 all_passed = False
@@ -62,6 +62,8 @@ async def check_health():
             response = await client.get(f"{API_BASE}/api/recon?target=invalid_domain_!")
             if response.status_code == 400:
                 print(f"   ✅ Invalid domain rejected (expected behavior)")
+            elif response.status_code == 200:
+                print(f"   ⚠️  Invalid input accepted - validation may need improvement")
             else:
                 print(f"   ⚠️  Unexpected status {response.status_code}")
     
